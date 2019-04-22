@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "ua.lpnu.android"
+        applicationId "f18.lr2.kn"
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1

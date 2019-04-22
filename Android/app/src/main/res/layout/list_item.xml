@@ -4,26 +4,60 @@
     android:paddingTop="10dp"
     android:paddingBottom="10dp"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:background="@color/colorPrimaryDark"
+    >
 
     <CheckBox
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        />
-
-    <TextView
-        android:id="@+id/itemtext"
-        android:text="@string/item"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
+        android:id="@+id/checkBox"
         android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_weight="8"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/itemtext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="monospace"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:text="@string/item"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textSize="18sp"
+            tools:text="Sdsdss" />
+
+        <TextView
+            android:id="@+id/phoneNumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="+380" />
+
+        <TextView
+            android:id="@+id/personis"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.1"
+            android:text="TextView"
+            android:textSize="3sp"
+            tools:visibility="visible" />
+
+    </LinearLayout>
 
     <ImageView
         android:id="@+id/morebutton"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:scaleType="centerInside"
         android:src="@android:drawable/ic_dialog_info" />
 
 
