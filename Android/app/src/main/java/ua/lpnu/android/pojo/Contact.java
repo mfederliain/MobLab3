@@ -8,7 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 import static ua.lpnu.android.pojo.Contact.TypePhone.FAMILY;
 import static ua.lpnu.android.pojo.Contact.TypePhone.FRIEND;
 import static ua.lpnu.android.pojo.Contact.TypePhone.HOME;
-import static ua.lpnu.android.pojo.Contact.TypePhone.UNKNOW;
+import static ua.lpnu.android.pojo.Contact.TypePhone.UNKNOWN;
 import static ua.lpnu.android.pojo.Contact.TypePhone.WORK;
 
 public class Contact {
@@ -69,14 +69,14 @@ public class Contact {
         this.idPhone = idPhone;
     }
 
-    @IntDef({HOME,WORK,FAMILY,FRIEND,UNKNOW })
+    @IntDef({HOME,WORK,FAMILY,FRIEND, UNKNOWN})
     @Retention(RetentionPolicy.SOURCE)
     public @interface TypePhone{
         int HOME=1;
         int WORK=2;
         int FAMILY=3;
         int FRIEND=4;
-        int UNKNOW=0;
+        int UNKNOWN =0;
     };
 
     @Override

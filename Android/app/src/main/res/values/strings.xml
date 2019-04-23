@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Laba 2 Федерляйн</string>
+    <string name="app_name">Laba 3 Федерляйн</string>
     <string name="item">ItemString</string>
     <string name="search_icon">Phone Icon</string>
     <string name="button1">Delete</string>
@@ -7,4 +7,17 @@
     <string name="button3">Add</string>
     <string name="moreinfoheader">Here comes more info about your item</string>
     <string name="moreinfo">More info\nMore info\nMore info\nMore info\nMore info\nMore info\nMore info\n</string>
+    <string name="hint_name">Name</string>
+    <string name="hint_surname">Surname</string>
+    <string name="add">Add</string>
+
+
+    <string-array name="planets_array">
+        <item>Home</item>
+        <item>Work</item>
+        <item>Family</item>
+        <item>Friend</item>
+        <item>UNKNOWN</item>
+
+    </string-array>
 </resources>

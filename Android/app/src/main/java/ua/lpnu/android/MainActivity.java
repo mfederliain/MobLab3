@@ -1,13 +1,14 @@
 package ua.lpnu.android;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.CheckBox;
@@ -18,6 +19,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import ua.lpnu.android.db.DBhelper;
 import ua.lpnu.android.pojo.Contact;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -26,13 +28,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ArrayList<Contact> contactsChecked = new ArrayList<>();
     ArrayList<Contact> contacts;
     EditText phoneCall;
+    DBhelper dBhelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        dBhelper = DBhelper.getInstance(getApplicationContext());
 
         viewGroup = (ViewGroup) findViewById(R.id.list);
-
 
 
         contacts = getContacs();
@@ -48,14 +52,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.call).setOnClickListener(this);
 
     }
-    public void showData(){
+
+    public void showData() {
         viewGroup.removeAllViews();
         for (Contact c : contacts) {
             //init items
 
             LayoutInflater l = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             final View item = l.inflate(R.layout.list_item, null);
-            ((TextView) item.findViewById(R.id.personis)).setText(String.valueOf(c.getIdPerson()));
+            final TextView textView = (TextView) item.findViewById(R.id.personis);
+            textView.setText(String.valueOf(c.getIdPerson()));
+
+
             ((CheckBox) item.findViewById(R.id.checkBox)).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -69,9 +77,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 ch.setChecked(false);
                                 return;
                             }
-                            Toast.makeText(getApplicationContext(),
-                                    "checked " + contact.getName(),
-                                    Toast.LENGTH_SHORT).show();
+
                             contactsChecked.add(contact);
                         } else {
                             int idPerson = Integer.valueOf(((TextView) item.findViewById(R.id.personis)).getText().toString());
@@ -80,20 +86,37 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 ch.setChecked(false);
                                 return;
                             }
-                            Toast.makeText(getApplicationContext(),
-                                    "unchecked " + contact.getName(),
-                                    Toast.LENGTH_SHORT).show();
+
                             contactsChecked.remove(contact);
                         }
                     }
                 }
             });
 
-            ((TextView) item.findViewById(R.id.itemtext)).setText(c.getName());
-            ((TextView) item.findViewById(R.id.phoneNumber)).setText(c.getPhone());
+            final TextView hp=  ((TextView) item.findViewById(R.id.phoneNumber));
+            hp .setText(c.getPhone());
+
+            TextView n= (TextView) item.findViewById(R.id.itemtext);
+           n.setText(c.getName());
+            n.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    phoneCall.setText(hp.getText().toString());
+                }
+            });
+
+
             item.findViewById(R.id.morebutton).setOnClickListener(this);
             viewGroup.addView(item);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        contacts = getContacs();
+        showData();
+
     }
 
     public Contact findByIdPerson(int idPerson) {
@@ -105,17 +128,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public ArrayList<Contact> getContacs() {
-        ArrayList<Contact> contacts = new ArrayList<Contact>();
-        int count = 1;
-        contacts.add(new Contact(count, count, "Petro", "Poroshenko", "+38032321", Contact.TypePhone.FRIEND));
-        count++;
-        contacts.add(new Contact(count, count, "Vova", "Thrach", "+35645654", Contact.TypePhone.WORK));
-        count++;
-        contacts.add(new Contact(count, count, "My love", "Secret", "+38032342", Contact.TypePhone.FAMILY));
-        count++;
-        contacts.add(new Contact(count, count, "Yra", "Terasenko", "+38094534", Contact.TypePhone.HOME));
-        count++;
-        contacts.add(new Contact(count, count, "Andriy", "Kor", "+38094534", Contact.TypePhone.UNKNOW));
+        if (dBhelper == null) return null;
+        ArrayList<Contact> contacts = dBhelper.getContacts();
+
 
         return contacts;
     }
@@ -123,31 +138,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         if (v.getId() == R.id.morebutton) {
             View detailview = findViewById(R.id.detail);
-            View viewParent=v.getRootView();
+            View viewParent = v.getRootView();
             int idPerson = Integer.valueOf(((TextView) viewParent.findViewById(R.id.personis)).getText().toString());
-            Contact c=findByIdPerson(idPerson);
-            ((TextView)detailview.findViewById(R.id.contactSurname)).setText(c.getSurname());
-            ((TextView)detailview.findViewById(R.id.contactName)).setText(c.getName());
-            ((TextView)detailview.findViewById(R.id.contactNumber)).setText(c.getPhone());
-            ImageView img=((ImageView)detailview.findViewById(R.id.contactImg));
-            switch (c.getTypePhone()){
+            Contact c = findByIdPerson(idPerson);
+            ((TextView) detailview.findViewById(R.id.contactSurname)).setText(c.getSurname());
+            ((TextView) detailview.findViewById(R.id.contactName)).setText(c.getName());
+            ((TextView) detailview.findViewById(R.id.contactNumber)).setText(c.getPhone());
+            ImageView img = ((ImageView) detailview.findViewById(R.id.contactImg));
+            switch (c.getTypePhone()) {
                 case Contact.TypePhone
                         .FAMILY:
-                    img.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(),R.drawable.ic_favorite_border_black_24dp));
+                    img.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_favorite_border_black_24dp));
                     break;
                 case Contact.TypePhone
                         .FRIEND:
-                    img.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(),R.drawable.ic_person_outline_black_24dp));
+                    img.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_person_outline_black_24dp));
 
                     break;
                 case Contact.TypePhone
                         .HOME:
-                    img.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(),R.drawable.ic_home_black_24dp));
+                    img.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_home_black_24dp));
 
                     break;
                 case Contact.TypePhone
                         .WORK:
-                    img.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(),R.drawable.ic_airplay_black_24dp));
+                    img.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_airplay_black_24dp));
 
                     break;
             }
@@ -184,37 +199,45 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             detailview.startAnimation(anim);
             detailview.setEnabled(false);
         } else if (v.getId() == R.id.delete) {
-            Toast.makeText(getApplicationContext(),
-                    "Delete ...",
-                    Toast.LENGTH_SHORT).show();
-            for (int i = 0; i < contactsChecked.size(); i++) {
-                for (int j = 0; j < contacts.size(); j++) {
-                    if (contacts.get(j).getIdPerson()==contactsChecked.get(i).getIdPerson()){
-                        contacts.remove(j);
-                        break;
+            if (contactsChecked.isEmpty())
+                Toast.makeText(getApplicationContext(),
+                        "Nothing to delete",
+                        Toast.LENGTH_SHORT).show();
+            else {
+                Toast.makeText(getApplicationContext(),
+                        "Delete ...",
+                        Toast.LENGTH_SHORT).show();
+                for (int i = 0; i < contactsChecked.size(); i++) {
+                    for (int j = 0; j < contacts.size(); j++) {
+                        if (contacts.get(j).getIdPerson() == contactsChecked.get(i).getIdPerson()) {
+                            dBhelper.deletePerson(contactsChecked.get(i).getIdPerson());
+                            break;
+                        }
                     }
                 }
+                contactsChecked.clear();
+                showData();
             }
-            contactsChecked.clear();
-            showData();
-
         } else if (v.getId() == R.id.edite) {
-            Toast.makeText(getApplicationContext(),
-                    "Edit .... not work ^)",
-                    Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getApplicationContext(),
+//                    "Edit .... not work ^)",
+//                    Toast.LENGTH_SHORT).show();
         } else if (v.getId() == R.id.add) {
-            Toast.makeText(getApplicationContext(),
-                    "We add ....",
-                    Toast.LENGTH_SHORT).show();
-            contacts.addAll(contactsChecked);
-            contactsChecked.clear();
-            showData();
+            Intent myIntent = new Intent(MainActivity.this, AddActivity.class);
+            MainActivity.this.startActivity(myIntent);
+
         } else if (v.getId() == R.id.call) {
-            String text=phoneCall.getText().toString();
-            if (text!=null && text.length()>0){
-                Toast.makeText(getApplicationContext(),
-                        "Calling "+text,
-                        Toast.LENGTH_SHORT).show();
+            String text = phoneCall.getText().toString();
+            if (text != null && text.length() > 0) {
+                try {
+                    Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + text));
+                    startActivity(intent);
+                }catch (Exception e){
+                                Toast.makeText(getApplicationContext(),
+                    "Could not call",
+                    Toast.LENGTH_SHORT).show();
+                }
+
             }
 
         }
